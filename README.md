@@ -1,11 +1,13 @@
-> Canonical: https://github.com/etamong-playground/httperr
+# httperr — cross-app error convention
 
-# httperr — etamong-lab cross-app error convention
+> **About** — One of several shared libraries behind a personal homelab "fleet" of small apps (error handling · audit logging · encryption-at-rest · i18n · UI · …). Published to show the **design decisions** behind these cross-cutting concerns. It is authored and maintained with [Claude Code](https://www.anthropic.com/claude-code) (Anthropic's agentic CLI), not hand-written.
+>
+> **This is a public repository** — keep internal infrastructure details (hostnames, secret/Vault paths, private URLs, internal issue/MR references) out of code, comments, README, and commit messages.
 
 This repo holds the convention in **two stacks** (same contract, same log line):
 
 - **Go** (this README): `go get github.com/etamong-playground/httperr` — see below.
-- **TypeScript/JS**: `@etamong-lab/httperr`, published from [`ts/`](ts/) (Node, Cloudflare
+- **TypeScript/JS**: `@etamong-playground/httperr`, published from [`ts/`](ts/) (Node, Cloudflare
   Workers, browser). Use `fail()` server-side and `formatError()` in frontends.
 
 ---
@@ -15,10 +17,9 @@ a failure once; the helper writes a clean, non-leaky `{"error","ref"}` response 
 client **and** logs one structured JSON record server-side under the same 8-hex `ref`.
 
 The `ref` is the **join key** between a user's report and the exact log line: paste it
-into the "etamong-lab Errors" Grafana dashboard and it resolves across every app. The
+into a Grafana/Loki dashboard and it resolves across every app. The
 log record is JSON so Loki parses it with `| json` and aggregates identically across
-services. See [planning#188](https://gitlab.com/etamong-lab/planning/-/issues/188) and
-the wiki concept `cross-app-error-view`.
+services.
 
 ## Install
 
@@ -61,12 +62,12 @@ The raw `err` is **never** sent to the client.
 Log record (one JSON line to stdout):
 
 ```json
-{"time":"…","level":"error","msg":"request failed","app":"pages","ref":"3f9a1c0b","method":"POST","path":"/api/v1/sites/{slug}/deploys","status":400,"user":"to.jooholee@gmail.com","err":"multipart: message too large"}
+{"time":"…","level":"error","msg":"request failed","app":"pages","ref":"3f9a1c0b","method":"POST","path":"/api/v1/sites/{slug}/deploys","status":400,"user":"alice@example.com","err":"multipart: message too large"}
 ```
 
 `ref` is a parsed field, **never** a Loki stream label (cardinality). `path` should be
 a route template, not the raw URL. Mirror this exact key set in other languages
-(`@etamong-lab/httperr` for TS, a `tracing` snippet for Rust) so a quoted ref maps 1:1
+(`@etamong-playground/httperr` for TS, a `tracing` snippet for Rust) so a quoted ref maps 1:1
 to a Loki lookup in any app.
 
 ## Request correlation (X-Request-Id)
@@ -94,5 +95,12 @@ a single id ties together:
 Read it anywhere downstream with `httperr.ReqID(r.Context())`; it returns `""` when the
 middleware isn't installed, and `Fail`/`Ref` then fall back to a fresh per-error ref —
 so adopting this is non-breaking. One quoted id now resolves a request's whole
-access → audit → error trail in Grafana. See
-[planning#201](https://gitlab.com/etamong-lab/planning/-/issues/201).
+access → audit → error trail in Grafana.
+
+## Acknowledgements
+
+No third-party runtime dependencies — Go standard library only.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
