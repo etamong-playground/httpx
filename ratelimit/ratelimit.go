@@ -1,7 +1,7 @@
 // Package ratelimit provides an in-memory per-IP token-bucket rate limiter
-// that integrates with [github.com/etamong-playground/httperr] for 429
+// that integrates with [github.com/etamong-playground/httpx] for 429
 // responses. It keys visitors by the IP returned by
-// [github.com/etamong-playground/httperr/ip.ClientIP].
+// [github.com/etamong-playground/httpx/ip.ClientIP].
 //
 // State is held in a single in-process map. A distributed store (e.g. a
 // CNPG table or Valkey cluster) would slot in here, replacing the visitor
@@ -16,8 +16,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/etamong-playground/httperr"
-	"github.com/etamong-playground/httperr/ip"
+	"github.com/etamong-playground/httpx"
+	"github.com/etamong-playground/httpx/ip"
 	"golang.org/x/time/rate"
 )
 
@@ -34,16 +34,16 @@ type RateLimiter struct {
 	visitors map[string]*visitor
 	r        rate.Limit
 	burst    int
-	resp     *httperr.Responder
+	resp     *httpx.Responder
 	stopOnce sync.Once
 	stopCh   chan struct{}
 }
 
 // New creates a rate limiter that allows r requests per second with the given
 // burst size. resp is used to emit the 429 response; pass the same
-// [httperr.Responder] shared across the service. A background goroutine
+// [httpx.Responder] shared across the service. A background goroutine
 // evicting visitors idle for more than 5 minutes is started immediately.
-func New(r rate.Limit, burst int, resp *httperr.Responder) *RateLimiter {
+func New(r rate.Limit, burst int, resp *httpx.Responder) *RateLimiter {
 	rl := &RateLimiter{
 		visitors: make(map[string]*visitor),
 		r:        r,
@@ -96,7 +96,7 @@ func (rl *RateLimiter) cleanup() {
 
 // Handler returns an HTTP middleware that rate-limits requests per client IP.
 // When the limit is exceeded it sets Retry-After and X-RateLimit-Limit headers
-// and delegates the 429 response to the injected [httperr.Responder].
+// and delegates the 429 response to the injected [httpx.Responder].
 func (rl *RateLimiter) Handler(next http.Handler) http.Handler {
 	limitHeader := strconv.Itoa(rl.burst)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

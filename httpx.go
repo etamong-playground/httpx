@@ -1,4 +1,4 @@
-// Package httperr is the etamong-lab cross-app error convention. A handler reports
+// Package httpx is the etamong-lab cross-app error convention. A handler reports
 // a failure once and the helper does two things under a single 8-hex reference id:
 // it writes a clean, non-leaky {"error","ref"} JSON body to the client, and it logs
 // one structured slog record carrying the technical detail server-side. The ref is
@@ -14,7 +14,7 @@
 // turning ref into a whole-request trace key — see planning#201.
 //
 // See planning#188 and the wiki concept cross-app-error-view for the full design.
-package httperr
+package httpx
 
 import (
 	"context"
