@@ -1,4 +1,4 @@
-module github.com/etamong-playground/httperr
+module github.com/etamong-playground/httpx
 
 go 1.24.0
 

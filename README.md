@@ -1,4 +1,4 @@
-# httperr — cross-app error convention
+# httpx — cross-app error convention
 
 > **About** — One of several small shared libraries used across a personal "fleet" of small apps (error handling · audit logging · encryption-at-rest · i18n · UI · …). Authored and maintained with [Claude Code](https://www.anthropic.com/claude-code) (Anthropic's agentic CLI). Each README documents the design rationale behind the library.
 >
@@ -6,8 +6,8 @@
 
 This repo holds the convention in **two stacks** (same contract, same log line):
 
-- **Go** (this README): `go get github.com/etamong-playground/httperr` — see below.
-- **TypeScript/JS**: `@etamong-playground/httperr`, published from [`ts/`](ts/) (Node, Cloudflare
+- **Go** (this README): `go get github.com/etamong-playground/httpx` — see below.
+- **TypeScript/JS**: `@etamong-playground/httpx`, published from [`ts/`](ts/) (Node, Cloudflare
   Workers, browser). Use `fail()` server-side and `formatError()` in frontends.
 
 ---
@@ -24,7 +24,7 @@ services.
 ## Install
 
 ```sh
-go get github.com/etamong-playground/httperr
+go get github.com/etamong-playground/httpx
 ```
 
 Public module — no `GOPRIVATE` needed.
@@ -34,8 +34,8 @@ Public module — no `GOPRIVATE` needed.
 Construct one `Responder` at startup and share it across handlers:
 
 ```go
-resp := &httperr.Responder{
-    Log:  httperr.NewLogger(os.Stdout),                 // JSON, lowercase level
+resp := &httpx.Responder{
+    Log:  httpx.NewLogger(os.Stdout),                   // JSON, lowercase level
     App:  "pages",                                       // = k8s app / namespace
     User: func(r *http.Request) string {                 // optional caller identity
         return identityFrom(r.Context()).Email
@@ -67,7 +67,7 @@ Log record (one JSON line to stdout):
 
 `ref` is a parsed field, **never** a Loki stream label (cardinality). `path` should be
 a route template, not the raw URL. Mirror this exact key set in other languages
-(`@etamong-playground/httperr` for TS, a `tracing` snippet for Rust) so a quoted ref maps 1:1
+(`@etamong-playground/httpx` for TS, a `tracing` snippet for Rust) so a quoted ref maps 1:1
 to a Loki lookup in any app.
 
 ## Request correlation (X-Request-Id)
@@ -79,7 +79,7 @@ id and thread it through every log line:
 ```go
 mux := http.NewServeMux()
 // … register handlers …
-srv := httperr.RequestID(accessLog(mux)) // outermost, before access logging
+srv := httpx.RequestID(accessLog(mux)) // outermost, before access logging
 ```
 
 `RequestID` reuses a trusted inbound `X-Request-Id` (so the id spans services and the
@@ -88,11 +88,11 @@ the response as `X-Request-Id`. `Responder.emit` then reuses it as the error `re
 a single id ties together:
 
 - the `X-Request-Id` header the client sees,
-- the `access` log line — add `"ref": httperr.ReqID(r.Context())`,
-- the `audit` log line — add `"ref": httperr.ReqID(ctx)`,
+- the `access` log line — add `"ref": httpx.ReqID(r.Context())`,
+- the `audit` log line — add `"ref": httpx.ReqID(ctx)`,
 - the `error` line (automatic).
 
-Read it anywhere downstream with `httperr.ReqID(r.Context())`; it returns `""` when the
+Read it anywhere downstream with `httpx.ReqID(r.Context())`; it returns `""` when the
 middleware isn't installed, and `Fail`/`Ref` then fall back to a fresh per-error ref —
 so adopting this is non-breaking. One quoted id now resolves a request's whole
 access → audit → error trail in Grafana.

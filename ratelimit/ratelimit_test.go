@@ -7,15 +7,15 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/etamong-playground/httperr"
-	"github.com/etamong-playground/httperr/ratelimit"
+	"github.com/etamong-playground/httpx"
+	"github.com/etamong-playground/httpx/ratelimit"
 	"golang.org/x/time/rate"
 )
 
-// testResponder returns a minimal *httperr.Responder that discards log output.
-func testResponder() *httperr.Responder {
-	return &httperr.Responder{
-		Log: httperr.NewLogger(io.Discard),
+// testResponder returns a minimal *httpx.Responder that discards log output.
+func testResponder() *httpx.Responder {
+	return &httpx.Responder{
+		Log: httpx.NewLogger(io.Discard),
 		App: "test",
 	}
 }
