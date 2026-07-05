@@ -1,7 +1,7 @@
 // Package ratelimit provides an in-memory per-IP token-bucket rate limiter
-// that integrates with [github.com/etamong-playground/httpx] for 429
+// that integrates with [github.com/etamong-playground/httpx-go] for 429
 // responses. It keys visitors by the IP returned by
-// [github.com/etamong-playground/httpx/ip.ClientIP].
+// [github.com/etamong-playground/httpx-go/ip.ClientIP].
 //
 // State is held in a single in-process map. A distributed store (e.g. a
 // CNPG table or Valkey cluster) would slot in here, replacing the visitor
@@ -16,8 +16,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/etamong-playground/httpx"
-	"github.com/etamong-playground/httpx/ip"
+	"github.com/etamong-playground/httpx-go"
+	"github.com/etamong-playground/httpx-go/ip"
 	"golang.org/x/time/rate"
 )
 

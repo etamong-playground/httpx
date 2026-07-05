@@ -1,4 +1,4 @@
-module github.com/etamong-playground/httpx
+module github.com/etamong-playground/httpx-go
 
 go 1.24.0
 
