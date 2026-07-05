@@ -6,8 +6,8 @@
 
 This repo holds the convention in **two stacks** (same contract, same log line):
 
-- **Go** (this README): `go get github.com/etamong-playground/httpx` — see below.
-- **TypeScript/JS**: `@etamong-playground/httpx`, published from [`ts/`](ts/) (Node, Cloudflare
+- **Go** (this README): `go get github.com/etamong-playground/httpx-go-go` — see below.
+- **TypeScript/JS**: `@etamong-playground/httpx-ts`, published from [`ts/`](ts/) (Node, Cloudflare
   Workers, browser). Use `fail()` server-side and `formatError()` in frontends.
 
 ---
@@ -24,7 +24,7 @@ services.
 ## Install
 
 ```sh
-go get github.com/etamong-playground/httpx
+go get github.com/etamong-playground/httpx-go
 ```
 
 Public module — no `GOPRIVATE` needed.
@@ -67,7 +67,7 @@ Log record (one JSON line to stdout):
 
 `ref` is a parsed field, **never** a Loki stream label (cardinality). `path` should be
 a route template, not the raw URL. Mirror this exact key set in other languages
-(`@etamong-playground/httpx` for TS, a `tracing` snippet for Rust) so a quoted ref maps 1:1
+(`@etamong-playground/httpx-ts` for TS, a `tracing` snippet for Rust) so a quoted ref maps 1:1
 to a Loki lookup in any app.
 
 ## Request correlation (X-Request-Id)

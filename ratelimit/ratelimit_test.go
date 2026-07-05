@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/etamong-playground/httpx"
-	"github.com/etamong-playground/httpx/ratelimit"
+	"github.com/etamong-playground/httpx-go"
+	"github.com/etamong-playground/httpx-go/ratelimit"
 	"golang.org/x/time/rate"
 )
 

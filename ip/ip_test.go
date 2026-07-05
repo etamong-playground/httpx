@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/etamong-playground/httpx/ip"
+	"github.com/etamong-playground/httpx-go/ip"
 )
 
 func TestClientIP(t *testing.T) {
